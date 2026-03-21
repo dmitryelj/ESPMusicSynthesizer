@@ -1,0 +1,161 @@
+(footprint "PianoKeySquare"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "KEY**"
+		(at -2.794 -30.734 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "0f7db1e8-19aa-4705-a577-b0ea0986bfe8")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "PianoKeySquare"
+		(at 0 1 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "7a67139b-e701-420c-a0fd-dd203706c2e8")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "061611c1-903f-4fa2-90d9-2b3c2a4fa348")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "ead0307c-fa85-4f55-9aa3-b55eb473eb21")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -3.81 -28.702)
+		(end -1.778 -28.702)
+		(stroke
+			(width 2)
+			(type solid)
+		)
+		(layer "F.Cu")
+		(uuid "76808013-401e-45ce-95e4-0ce11a51edc1")
+	)
+	(fp_line
+		(start -3.81 0)
+		(end -3.81 -28.702)
+		(stroke
+			(width 2)
+			(type solid)
+		)
+		(layer "F.Cu")
+		(uuid "4afca272-0ad9-43ba-9f69-3f9a294e00c8")
+	)
+	(fp_line
+		(start -1.524 -26.416)
+		(end -1.016 -1.27)
+		(stroke
+			(width 4)
+			(type solid)
+		)
+		(layer "F.Cu")
+		(uuid "8d91709d-b06d-43d2-b237-8c8a3eba1ac4")
+	)
+	(fp_line
+		(start 1.524 -26.416)
+		(end 0.9525 -1.27)
+		(stroke
+			(width 4)
+			(type solid)
+		)
+		(layer "F.Cu")
+		(uuid "ea599c97-d029-4f1b-b68e-6966d6128281")
+	)
+	(fp_line
+		(start 3.7338 0)
+		(end -3.7338 0)
+		(stroke
+			(width 2)
+			(type solid)
+		)
+		(layer "F.Cu")
+		(uuid "05767a28-0f0b-4620-be3a-f2d169d23259")
+	)
+	(fp_line
+		(start 3.81 -28.702)
+		(end 3.81 0)
+		(stroke
+			(width 2)
+			(type solid)
+		)
+		(layer "F.Cu")
+		(uuid "f721563d-613f-49fc-a3d7-26b4a7139063")
+	)
+	(fp_line
+		(start 3.810006 -28.702)
+		(end 1.778 -28.702)
+		(stroke
+			(width 2)
+			(type solid)
+		)
+		(layer "F.Cu")
+		(uuid "391487df-461f-40ec-84a0-5bc587a4a001")
+	)
+	(fp_poly
+		(pts
+			(xy -5.08 1.524) (xy 5.334 1.524) (xy 5.334 -29.972) (xy -5.08 -29.972) (xy -5.08 -29.6639)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.Mask")
+		(uuid "b600666d-af17-4625-ac32-0d5ed4494218")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "5f74a6f3-7205-4100-bc38-fd95ed6affb8")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" thru_hole roundrect
+		(at 0 -28.6639)
+		(size 1.905 2)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.15)
+		(uuid "70f88be7-8e34-40d7-9574-fab5d183d2c2")
+	)
+	(embedded_fonts no)
+)
