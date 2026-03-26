@@ -1,10 +1,10 @@
 # ESPMusicSynthesizer
-A Stylophone-type music synthesiser made from scratch on ESP32
+A Stylophone-type music synthesizer made from scratch on ESP32
 
-Breadboard version
+**Breadboard version**
 
-![alt text](screenshots/breadboard.jpg "Breadboard")
+![Breadboard](screenshots/breadboard.jpg)
 
-PCB version
+**PCB version**
 
-![alt text](screenshots/pcb.png "PCB")
+![PCB](screenshots/pcb.png)
