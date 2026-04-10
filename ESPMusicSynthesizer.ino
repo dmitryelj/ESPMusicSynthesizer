@@ -47,35 +47,53 @@
 #define KEY14   15
 #define KEY15   27
 
-#define KEYS_TOTAL 15
-
 // Key states
 #define KEY_IDLE     0
 #define KEY_PRESSED  1
 #define KEY_RELEASED 2
 
-int   keyPressed[KEYS_TOTAL] = {0};
+// 1 more octave is available when the "Octave Up" button is pressed
+#define KEYS_PHYSICAL 15
+#define KEYS_TOTAL    15+12
+
+int   keyPressed[KEYS_PHYSICAL] = {0};
 int   keyState[KEYS_TOTAL] = {0};
 float keyPhase[KEYS_TOTAL] = {0};
 float keyAmplitude[KEYS_TOTAL] = {0};
 
+int octaveUpKeyState = 0;
+
 // Key frequencies
 int   keyFrequencies[KEYS_TOTAL] = {
-    262,
-    277,
-    294,
-    311,
-    330,
-    349,
-    370,
-    392,
-    415,
-    440,
-    466,
-    494,
-    523,
-    554,
-    587
+    // Physical keys 
+    262,  // C4
+    277,  //     C#
+    294,  // D4
+    311,  //     D#
+    330,  // E4
+    349,  // F4
+    370,  //     F#
+    392,  // G4
+    415,  //     G#
+    440,  // A4
+    466,  //     A#
+    494,  // B4
+    523,  // C5
+    554,  //    C#
+    587,  // D5
+    // Keys with an "octave up" button available
+    622,  //    D# 
+    659,  // E5
+    698,  // F5
+    740,  //    F#
+    784,  // G5
+    831,  //    G#
+    880,  // A5
+    932,  //    A#
+    988,  // B5
+    1046, // C6
+    1109, //    C#
+    1175, // D6
 };
 
 // Audio
@@ -140,36 +158,48 @@ void setupPins() {
 }
 
 void updateKeys() {
-    // Piano keys
-    int keys[KEYS_TOTAL] = { KEY1NP, KEY2, KEY3, KEY4, KEY5NP,
-                             KEY6NP, KEY7, KEY8, KEY9, KEY10,
-                             KEY11, KEY12, KEY13, KEY14, KEY15 };
-    for (int i = 0; i < KEYS_TOTAL; i++) {
-        int wasPressed = keyPressed[i];
+    // Update piano keys
+    int keys[KEYS_PHYSICAL] = { KEY1NP, KEY2, KEY3, KEY4, KEY5NP,
+                                KEY6NP, KEY7, KEY8, KEY9, KEY10,
+                                KEY11, KEY12, KEY13, KEY14, KEY15 };
+
+    for (int i = 0; i < KEYS_PHYSICAL; i++) {
         int isPressed = digitalRead(keys[i]) == 0;
-        if (isPressed == wasPressed) 
-            continue;
         
-        if (isPressed == 1 && wasPressed == 0) {
+        // Check if the key is pressed; 1st octave
+        if (isPressed == 1 && keyPressed[i] == 0) {
             onKeyDown(i);
+            keyPressed[i] = 1;
         }
-        if (isPressed == 0 && wasPressed == 1) {
+        // Check if the key is released
+        if (isPressed == 0 && keyPressed[i] == 1) {
             onKeyUp(i);
+            keyPressed[i] = 0;
         }
-        keyPressed[i] = isPressed;
+    }
+
+    // Update "octave up" key
+    int octavePressed = digitalRead(RANGE_UP_BTN) == 0;
+    if (octavePressed != octaveUpKeyState) {
+        if (octavePressed) 
+            onOctavePressDown();
+        else 
+            onOctavePressUp();
+        octaveUpKeyState = octavePressed;
     }
 }
 
 void onKeyDown(int keyIndex) {
     // This is NOT an ISR, so Serial.print is safe here 
-    Serial.printf("onKeyDown %d, ampl %d\n", keyIndex+1, amplitude);
-
-    if (keyState[keyIndex] == KEY_IDLE) {
-        keyPhase[keyIndex] = 0;
-    }
-    keyState[keyIndex] = KEY_PRESSED;
-    keyAmplitude[keyIndex] = 1.0f;
+    Serial.printf("onKeyDown %d\n", keyIndex+1);
     digitalWrite(INTERNAL_LED, 1);
+
+    // Set the audio volume
+    updateVolume();
+
+    int isOctaveUpPressed = digitalRead(RANGE_UP_BTN) == 0;
+    int index = isOctaveUpPressed ? keyIndex + 12 : keyIndex;
+    onVirtualKeyDown(index);
 }
 
 void onKeyUp(int keyIndex) {
@@ -177,8 +207,44 @@ void onKeyUp(int keyIndex) {
     Serial.printf("onKeyUp %d\n", keyIndex+1);
     digitalWrite(INTERNAL_LED, 0);
 
+    // An octave up key could also be released
+    onVirtualKeyUp(keyIndex);
+    onVirtualKeyUp(keyIndex + 12);
+}
+
+void onVirtualKeyDown(int keyIndex) {
+    if (keyState[keyIndex] == KEY_IDLE) {
+        keyPhase[keyIndex] = 0;
+    }
+    keyState[keyIndex] = KEY_PRESSED;
+    keyAmplitude[keyIndex] = 1.0f;
+}
+
+void onVirtualKeyUp(int keyIndex) {
     if (keyState[keyIndex] == KEY_PRESSED) {
         keyState[keyIndex] = KEY_RELEASED;
+    }
+}
+
+void onOctavePressDown() {
+    Serial.printf("onOctavePressDown\n");
+    // If the key was pressed; generate keyDown event octave higher
+    for (int i = 0; i < KEYS_PHYSICAL; i++) {
+        if (keyPressed[i] == 1) {
+            onVirtualKeyUp(i);
+            onVirtualKeyDown(i + 12);
+        }
+    }
+}
+
+void onOctavePressUp() {
+    Serial.printf("onOctavePressUp\n");
+    // If the key was released; generate keyUp event octave higher
+    for (int i = 0; i < KEYS_PHYSICAL; i++) {
+        if (keyPressed[i] == 1) {
+            onVirtualKeyUp(i + 12);
+            onVirtualKeyDown(i);
+        }
     }
 }
 
@@ -293,9 +359,6 @@ void showAudioError() {
 }
 
 void loop() {
-    // Get the audio volume
-    updateVolume();
-
     // Read all keys
     updateKeys();
 
